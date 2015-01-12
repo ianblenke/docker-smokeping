@@ -26,11 +26,14 @@ set -o nounset                              # Treat unset variables as an error
 gmail() { local user="$1" pass="$2" aliasfile=/etc/ssmtp/revaliases \
             conf=/etc/ssmtp/ssmtp.conf
     sed -i '/^root/d' $aliasfile
-    echo "root:${user}+smokeping@gmail.com:smtp.gmail.com:587" >> $aliasfile
+    SSMTP_DOMAIN=${SSMTP_DOMAIN:-gmail.com}
+    SSMTP_EMAIL=${SSMTP_EMAIL:-${user}+smokeping@${SSMTP_DOMAIN}}
+    SSMTP_HOST=${SSMTP_HOST:-smtp.${SSMTP_DOMAIN}:${SSMTP_PORT:-587}}
+    echo "root:$SMTP_EMAIL:${SSMTP_HOST}" >> $aliasfile
 
-    sed -i 's/^\(root=\).*/\1'"$user"'+smokeping@gmail.com/' $conf
-    sed -i 's/^\(mailhub=\).*/\1smtp.gmail.com:587/' $conf
-    sed -i 's/^#*\(rewriteDomain=\).*/\1gmail.com/' $conf
+    sed -i 's/^\(root=\).*/\1'"$SSMTP_EMAIL"'/' $conf
+    sed -i 's/^\(mailhub=\).*/\1'"$SSMTP_HOST"'/' $conf
+    sed -i 's/^#*\(rewriteDomain=\).*/\1'"$SSMTP_DOMAIN"'/' $conf
     sed -i 's/^\(hostname=\).*/\1localhost/' $conf
     sed -i '/TLS/,/AuthPass/d' $conf
     sed -i '/^hostname=localhost$/a \
