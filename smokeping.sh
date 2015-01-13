@@ -29,7 +29,7 @@ gmail() { local user="$1" pass="$2" aliasfile=/etc/ssmtp/revaliases \
     SSMTP_DOMAIN=${SSMTP_DOMAIN:-gmail.com}
     SSMTP_EMAIL=${SSMTP_EMAIL:-${user}+smokeping@${SSMTP_DOMAIN}}
     SSMTP_HOST=${SSMTP_HOST:-smtp.${SSMTP_DOMAIN}:${SSMTP_PORT:-587}}
-    echo "root:$SMTP_EMAIL:${SSMTP_HOST}" >> $aliasfile
+    echo "root:$SSMTP_EMAIL:${SSMTP_HOST}" >> $aliasfile
 
     sed -i 's/^\(root=\).*/\1'"$SSMTP_EMAIL"'/' $conf
     sed -i 's/^\(mailhub=\).*/\1'"$SSMTP_HOST"'/' $conf
